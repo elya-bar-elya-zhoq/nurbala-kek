@@ -167,6 +167,8 @@ print(probs)
 from collections import Counter
 from queue import PriorityQueue
 
+K = 4
+
 class HuffmanNode:
     def __init__(self, char, freq=0, left=None, right=None):
         self.char = char
@@ -206,7 +208,9 @@ def encode(text):
         encoded_text_code = num * "0" + encoded_text_code
 
     print(f"frequencies: {frequencies}")
-    print(f"encoded text code: {encoded_text_code}")
+    print(f"encoded text code by Huffman: {encoded_text_code}")
+    hamming(encoded_text_code)
+    
 
     return f"{encoded_tree_code}{num:08b}{encoded_text_code}"
 
@@ -296,6 +300,52 @@ def _decode_huffman_tree(tree_code_ar):
         return HuffmanNode(chr(int(char, 2)))
 
     return HuffmanNode(None, left=_decode_huffman_tree(tree_code_ar), right=_decode_huffman_tree(tree_code_ar))
+
+
+def hamming(text):
+        
+        data = list(text)
+        data.reverse()
+        c,ch,j,r,h = 0,0,0,0,[]
+
+
+        while ((len(text)+r+1)>(pow(2,r))):
+            r=r+1
+
+        for i in range(0,(r+len(data))):
+            p=(2**c)
+
+            if(p==(i+1)):
+                h.append(0)
+                c=c+1
+
+            else:
+                h.append(int(data[j]))
+                j=j+1
+
+        for parity in range(0,(len(h))):
+            ph=(2**ch)
+            if(ph==(parity+1)):
+                startIndex=ph-1
+                i=startIndex
+                toXor=[]
+
+                while(i<len(h)):
+                    block=h[i:i+ph]
+                    toXor.extend(block)
+                    i+=2*ph
+
+                for z in range(1,len(toXor)):
+                    h[startIndex]=h[startIndex]^toXor[z]
+                ch+=1
+
+        h.reverse()
+        print('encode to  Hamming code = ', end="")
+        print(int(''.join(map(str, h))))
+        
+    
+
+
 
 
 
