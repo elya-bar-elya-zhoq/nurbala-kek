@@ -478,24 +478,77 @@ def hamming(text):
         print('encode to  Hamming code = ', end="")
         print(s)
         step = random.randint(3, 10)
+        kek = 0
         print(step)
         for i in range(0, len(s), step):
             if s[i] == '0':
                 s = s[:i] + '1' + s[i+1:]
             elif s[i] == '1':
               s = s[:i] + '0' + s[i+1:]
+              kek = s
         print('Hamming encoded string with errors =', end="")
-        print(s)
+        print(kek)
+
+        #Part 5
+        d = kek
+        data = list(d)
+        data.reverse()
+        c, ch, j, r, error, h, parity_list, h_copy = 0, 0, 0, 0, 0, [], [], []
+
+        for k in range(0, len(data)):
+            p = (2 ** c)
+            h.append(int(data[k]))
+            h_copy.append(data[k])
+            if (p == (k + 1)):
+                c = c + 1
+
+        for parity in range(0, (len(h))):
+            ph = (2 ** ch)
+            if (ph == (parity + 1)):
+
+                startIndex = ph - 1
+                i = startIndex
+                toXor = []
+
+                while (i < len(h)):
+                    block = h[i:i + ph]
+                    toXor.extend(block)
+                    i += 2 * ph
+
+                for z in range(1, len(toXor)):
+                    h[startIndex] = h[startIndex] ^ toXor[z]
+                parity_list.append(h[parity])
+                ch += 1
+        parity_list.reverse()
+        error = sum(int(parity_list) * (2 ** i) for i, parity_list in enumerate(parity_list[::-1]))
+
+        if ((error) == 0):
+            print('There is no error in the hamming code received')
+
+        elif ((error) >= len(h_copy)):
+            print('Error cannot be detected')
+
+        else:
+            print('Error is in', error, 'bit')
+
+            if (h_copy[error - 1] == '0'):
+                h_copy[error - 1] = '1'
+
+            elif (h_copy[error - 1] == '1'):
+                h_copy[error - 1] = '0'
+                print('After correction hamming code is:- ')
+            h_copy.reverse()
+            print(int(''.join(map(str, h_copy))))
 
 
-with open('ham.txt') as f:
+with open('text.txt') as f:
     my_lines = list(f)
 step = random.randint(3, 10)
 
 
 print('Hamming encoded string with errors = ', end="")
 print(my_lines)
-        
+
 
 if __name__ == "__main__":
     file_to_compress, decompressed, compressed = "text.txt", "decompressed", "compressed"
